@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 
@@ -38,6 +39,7 @@ func (rs *Resources) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	hash, err := computeHash(user.Password, rs.AuthKey)
 	if err != nil {
+		log.Warn().Err(err).Msg("Failed to compute hash")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -48,12 +50,14 @@ func (rs *Resources) SignUp(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusConflict)
 			return
 		}
+		log.Warn().Err(err).Msg("Failed to put user")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	tokenString, err := generateToken(id, rs.AuthKey)
 	if err != nil {
+		log.Warn().Err(err).Msg("Failed to generate token")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -83,6 +87,7 @@ func (rs *Resources) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	hash, err := computeHash(user.Password, rs.AuthKey)
 	if err != nil {
+		log.Warn().Err(err).Msg("Failed to compute hash")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -93,12 +98,14 @@ func (rs *Resources) SignIn(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+		log.Warn().Err(err).Msg("Failed to get user")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	tokenString, err := generateToken(id, rs.AuthKey)
 	if err != nil {
+		log.Warn().Err(err).Msg("Failed to generate token")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

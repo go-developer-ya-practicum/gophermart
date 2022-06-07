@@ -9,4 +9,7 @@ import (
 type Storage interface {
 	PutUser(ctx context.Context, user *models.User) (userID int, err error)
 	GetUser(ctx context.Context, user *models.User) (userID int, err error)
+
+	PutOrder(ctx context.Context, order *models.Order) error
+	ListOrders(ctx context.Context, userID int) ([]*models.Order, error)
 }

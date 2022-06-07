@@ -21,6 +21,8 @@ func (rs *Resources) Routes() chi.Router {
 
 		r.Group(func(r chi.Router) {
 			r.Use(rs.AuthMiddleware)
+			r.Post("/orders", rs.UploadOrder)
+			r.Get("/orders", rs.ListOrders)
 		})
 	})
 
