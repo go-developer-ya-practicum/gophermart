@@ -6,11 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/rs/zerolog/log"
 
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app"
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"

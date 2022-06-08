@@ -1,11 +1,13 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/joeljunstrom/go-luhn"
 	"github.com/rs/zerolog/log"
@@ -15,6 +17,8 @@ import (
 )
 
 func (rs *Resources) UploadOrder(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -45,14 +49,17 @@ func (rs *Resources) UploadOrder(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, app.ErrOrderUploadedByAnotherUser):
 			w.WriteHeader(http.StatusConflict)
+			return
 		case errors.Is(err, app.ErrOrderAlreadyUploaded):
 			w.WriteHeader(http.StatusOK)
+			return
 		default:
 			log.Warn().Err(err).Msg("Failed to put order")
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
-		return
 	}
+	go rs.processOrder(order)
 	w.WriteHeader(http.StatusAccepted)
 }
 
@@ -78,4 +85,40 @@ func (rs *Resources) ListOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func (rs *Resources) processOrder(order *models.Order) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	for {
+		updatedOrder, err := rs.Provider.GetOrderAccrual(order.Number)
+		if err != nil {
+			log.Warn().Err(err).Msg("Failed to get order accrual")
+			continue
+		}
+
+		if updatedOrder.Status != order.Status {
+			err = rs.Storage.UpdateOrder(ctx, updatedOrder)
+			if err != nil {
+				log.Warn().Err(err).Msg("Failed to to update order info")
+				return
+			}
+		}
+
+		if updatedOrder.Status == models.OrderStatusProcessed {
+			transaction := &models.Transaction{
+				UserID:   order.UserID,
+				OrderNum: order.Number,
+				Amount:   updatedOrder.Accrual,
+			}
+			if err = rs.Storage.PutTransaction(ctx, transaction); err != nil {
+				log.Warn().Err(err).Msg("Failed to store transaction")
+			}
+		}
+
+		if updatedOrder.Status == models.OrderStatusProcessed || updatedOrder.Status == models.OrderStatusInvalid {
+			break
+		}
+	}
 }

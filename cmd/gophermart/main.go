@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/api"
+	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/provider"
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/storage/pg"
 )
 
@@ -22,8 +23,9 @@ func main() {
 	}
 
 	rs := &api.Resources{
-		AuthKey: []byte(cfg.AuthKey),
-		Storage: storage,
+		AuthKey:  []byte(cfg.AuthKey),
+		Storage:  storage,
+		Provider: provider.New(cfg.Accrual),
 	}
 
 	srv := &http.Server{
