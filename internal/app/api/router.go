@@ -6,12 +6,14 @@ import (
 
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/provider"
 	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/storage"
+	"github.com/hikjik/go-musthave-diploma-tpl/pkg/wpool"
 )
 
 type Resources struct {
-	AuthKey  []byte
-	Storage  storage.Storage
-	Provider provider.Provider
+	AuthKey    []byte
+	Storage    storage.Storage
+	Provider   provider.Provider
+	WorkerPool *wpool.WorkerPool
 }
 
 func (rs *Resources) Routes() chi.Router {

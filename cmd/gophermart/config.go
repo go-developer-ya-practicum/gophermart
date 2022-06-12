@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Address     string `env:"RUN_ADDRESS"`
-	DatabaseURI string `env:"DATABASE_URI"`
-	Accrual     string `env:"ACCRUAL_SYSTEM_ADDRESS"`
-	AuthKey     string `env:"Auth Key"`
+	Address      string `env:"RUN_ADDRESS"`
+	DatabaseURI  string `env:"DATABASE_URI"`
+	Accrual      string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	AuthKey      string `env:"AUTH_KEY"`
+	WorkersCount int    `env:"WORKERS_COUNT"`
 }
 
 func ReadConfig() Config {
@@ -21,6 +22,7 @@ func ReadConfig() Config {
 	flag.StringVar(&config.DatabaseURI, "d", "", "Database URI")
 	flag.StringVar(&config.Accrual, "r", "", "Accrual address")
 	flag.StringVar(&config.AuthKey, "k", "", "Auth key")
+	flag.IntVar(&config.WorkersCount, "j", 10, "Workers count")
 	flag.Parse()
 
 	if err := env.Parse(&config); err != nil {

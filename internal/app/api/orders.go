@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/joeljunstrom/go-luhn"
 	"github.com/rs/zerolog/log"
@@ -59,7 +58,10 @@ func (rs *Resources) UploadOrder(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	go rs.processOrder(order)
+
+	rs.WorkerPool.Do(func(ctx context.Context) {
+		rs.processOrder(ctx, order)
+	})
 	w.WriteHeader(http.StatusAccepted)
 }
 
@@ -87,38 +89,40 @@ func (rs *Resources) ListOrders(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (rs *Resources) processOrder(order *models.Order) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
-
+func (rs *Resources) processOrder(ctx context.Context, order *models.Order) {
 	for {
-		updatedOrder, err := rs.Provider.GetOrderAccrual(order.Number)
-		if err != nil {
-			log.Warn().Err(err).Msg("Failed to get order accrual")
-			continue
-		}
-
-		if updatedOrder.Status != order.Status {
-			err = rs.Storage.UpdateOrder(ctx, updatedOrder)
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			updatedOrder, err := rs.Provider.GetOrderAccrual(order.Number)
 			if err != nil {
-				log.Warn().Err(err).Msg("Failed to to update order info")
+				log.Warn().Err(err).Msg("Failed to get order accrual")
+				continue
+			}
+
+			if updatedOrder.Status != order.Status {
+				err = rs.Storage.UpdateOrder(ctx, updatedOrder)
+				if err != nil {
+					log.Warn().Err(err).Msg("Failed to to update order info")
+					return
+				}
+			}
+
+			if updatedOrder.Status == models.OrderStatusProcessed {
+				transaction := &models.Transaction{
+					UserID:   order.UserID,
+					OrderNum: order.Number,
+					Amount:   updatedOrder.Accrual,
+				}
+				if err = rs.Storage.PutTransaction(ctx, transaction); err != nil {
+					log.Warn().Err(err).Msg("Failed to store transaction")
+				}
+			}
+
+			if updatedOrder.Status == models.OrderStatusProcessed || updatedOrder.Status == models.OrderStatusInvalid {
 				return
 			}
-		}
-
-		if updatedOrder.Status == models.OrderStatusProcessed {
-			transaction := &models.Transaction{
-				UserID:   order.UserID,
-				OrderNum: order.Number,
-				Amount:   updatedOrder.Accrual,
-			}
-			if err = rs.Storage.PutTransaction(ctx, transaction); err != nil {
-				log.Warn().Err(err).Msg("Failed to store transaction")
-			}
-		}
-
-		if updatedOrder.Status == models.OrderStatusProcessed || updatedOrder.Status == models.OrderStatusInvalid {
-			break
 		}
 	}
 }
