@@ -31,7 +31,7 @@ func (rs *Resources) Routes() chi.Router {
 
 			r.Get("/balance", rs.GetUserBalance)
 			r.Post("/balance/withdraw", rs.Withdraw)
-			r.Get("/balance/withdrawals", rs.ListWithdrawals)
+			r.Get("/withdrawals", rs.ListWithdrawals)
 		})
 	})
 	return r
