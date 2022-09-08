@@ -30,7 +30,8 @@ func (s *StorageDB) ListWithdrawals(ctx context.Context, userID int) ([]*models.
 
 	rows, err := conn.Query(
 		ctx,
-		`SELECT order_id, amount, created_at FROM transactions WHERE user_id = ($1) ORDER BY created_at`,
+		`SELECT order_id, amount, created_at FROM transactions
+             WHERE user_id = ($1) AND amount < 0 ORDER BY created_at DESC`,
 		userID)
 	if err != nil {
 		return nil, err
@@ -41,6 +42,7 @@ func (s *StorageDB) ListWithdrawals(ctx context.Context, userID int) ([]*models.
 		if err = rows.Scan(&transaction.OrderNum, &transaction.Amount, &transaction.ProcessedAt.Time); err != nil {
 			return nil, err
 		}
+		transaction.Amount *= -1
 		transactions = append(transactions, transaction)
 	}
 	return transactions, nil
