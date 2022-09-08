@@ -6,8 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v4"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 func (s *StorageDB) PutUser(ctx context.Context, user *models.User) (int, error) {

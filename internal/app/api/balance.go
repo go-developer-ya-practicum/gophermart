@@ -8,7 +8,7 @@ import (
 	"github.com/joeljunstrom/go-luhn"
 	"github.com/rs/zerolog/log"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 func (rs *Resources) GetUserBalance(w http.ResponseWriter, r *http.Request) {

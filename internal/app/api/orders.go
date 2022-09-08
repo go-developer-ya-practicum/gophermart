@@ -11,8 +11,8 @@ import (
 	"github.com/joeljunstrom/go-luhn"
 	"github.com/rs/zerolog/log"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 func (rs *Resources) UploadOrder(w http.ResponseWriter, r *http.Request) {

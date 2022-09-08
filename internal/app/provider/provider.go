@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 type Provider interface {

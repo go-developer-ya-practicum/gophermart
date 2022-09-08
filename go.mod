@@ -1,4 +1,4 @@
-module github.com/hikjik/go-musthave-diploma-tpl
+module github.com/hikjik/gophermart
 
 go 1.17
 

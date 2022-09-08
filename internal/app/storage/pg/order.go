@@ -3,8 +3,8 @@ package pg
 import (
 	"context"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 func (s *StorageDB) PutOrder(ctx context.Context, order *models.Order) error {

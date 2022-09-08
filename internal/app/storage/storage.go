@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 type Storage interface {

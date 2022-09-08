@@ -9,7 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v4/pgxpool"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/storage"
+	"github.com/hikjik/gophermart/internal/app/storage"
 )
 
 type StorageDB struct {

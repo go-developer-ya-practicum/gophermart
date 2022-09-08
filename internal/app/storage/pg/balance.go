@@ -3,7 +3,7 @@ package pg
 import (
 	"context"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/models"
+	"github.com/hikjik/gophermart/internal/app/models"
 )
 
 func (s *StorageDB) GetUserBalance(ctx context.Context, userID int) (*models.UserBalance, error) {

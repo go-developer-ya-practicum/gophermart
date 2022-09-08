@@ -4,9 +4,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/provider"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/storage"
-	"github.com/hikjik/go-musthave-diploma-tpl/pkg/wpool"
+	"github.com/hikjik/gophermart/internal/app/provider"
+	"github.com/hikjik/gophermart/internal/app/storage"
+	"github.com/hikjik/gophermart/pkg/wpool"
 )
 
 type Resources struct {

@@ -9,10 +9,10 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/api"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/provider"
-	"github.com/hikjik/go-musthave-diploma-tpl/internal/app/storage/pg"
-	"github.com/hikjik/go-musthave-diploma-tpl/pkg/wpool"
+	"github.com/hikjik/gophermart/internal/app/api"
+	"github.com/hikjik/gophermart/internal/app/provider"
+	"github.com/hikjik/gophermart/internal/app/storage/pg"
+	"github.com/hikjik/gophermart/pkg/wpool"
 )
 
 func main() {
